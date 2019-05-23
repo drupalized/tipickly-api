@@ -1,0 +1,22 @@
+google_login_handler.settings:
+  type: config_object
+  label: 'Google Login Handler settings'
+  mapping:
+    google_login_handler:
+      type: mapping
+      mapping:
+        google_api_url:
+          type: text
+          label: 'Google API to validate tokens:'
+        token_issuer:
+          type: text
+          label: 'Issuer (iss) to be used on JWT token:'
+        token_audience:
+          type: text
+          label: 'Audience (aud) to be used on JWT token:'
+        signature_key:
+          type: text
+          label: 'Key to be used on JWT token:'
+        expiration_time:
+          type: integer
+          label: 'Time in milliseconds for token expiration:'

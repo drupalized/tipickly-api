@@ -1,0 +1,4 @@
+services:
+  google_login_handler.jwt_token_handler:
+    class: Drupal\google_login_handler\JwtTokenHandlerService
+    arguments: ['@config.factory', '@http_client']

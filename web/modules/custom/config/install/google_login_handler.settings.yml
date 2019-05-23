@@ -1,0 +1,6 @@
+google_login_handler:
+  google_api_url: 'https://www.googleapis.com/oauth2/v1/tokeninfo'
+  token_issuer: ''
+  token_audience: ''
+  signature_key: ''
+  expiration_time: 5000

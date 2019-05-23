@@ -1,0 +1,35 @@
+user_management.create_user:
+  path: '/api/user_management/create_user'
+  defaults:
+    _controller: '\Drupal\user_management\Controller\UserManagementController::create_user'
+    _title: 'User Management'
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'
+
+user_management.update_user:
+  path: '/api/user_management/update_user'
+  defaults:
+    _controller: '\Drupal\user_management\Controller\UserManagementController::update_user'
+    _title: 'User Management'
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'
+
+user_management.get_user:
+  path: '/api/user_management/get_user'
+  defaults:
+    _controller: '\Drupal\user_management\Controller\UserManagementController::get_user'
+    _title: 'User Management'
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'
+
+user_management.delete_user:
+  path: '/api/user_management/delete_user'
+  defaults:
+    _controller: '\Drupal\user_management\Controller\UserManagementController::delete_user'
+    _title: 'User Management'
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'

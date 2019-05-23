@@ -1,0 +1,6 @@
+google_login_handler.form:
+  title: 'Google Login Handler'
+  description: 'Configure settings for Google Login Handler module.'
+  route_name: google_login_handler.form
+  parent: system.admin_config_system
+  weight: 99

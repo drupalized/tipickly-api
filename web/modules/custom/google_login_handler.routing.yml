@@ -1,0 +1,18 @@
+google_login_handler.form:
+  path: '/admin/google_login_handler'
+  defaults:
+    _form: '\Drupal\google_login_handler\Form\GoogleLoginHandlerForm'
+    _title: 'Google Login Handler setings'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+    
+google_login_handler.validate:
+  path: '/api/google_login_handler/validate'
+  defaults:
+    _controller: '\Drupal\google_login_handler\Controller\GoogleLoginHandlerController::validate'
+    _title: 'Google Login Handler'
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'
