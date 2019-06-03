@@ -10,21 +10,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Controller that handles Google's token to log in 
+ * Controller that handles Google's token to log in
  * and interacts with JwtTokenHandlerService service
  */
 class GoogleLoginHandlerController extends ControllerBase {
 
   /**
    * Variable that will store the service
-   * 
+   *
    * @var \Drupal\google_login_handler\JwtTokenHandlerService
    */
   protected $jwtTokenHandlerService;
 
   /**
    * Request stack
-   * 
+   *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
@@ -51,31 +51,37 @@ class GoogleLoginHandlerController extends ControllerBase {
    * Calls the API and returns a user token or message error
    */
   public function validate() {
-    
     $token = $this->requestStack->getCurrentRequest()->get('token');
 
-    if(empty($token)) {
+    if (empty($token)) {
       $response = ['message' => 'no_token_sent'];
       return new JsonResponse($response);
     }
 
     $validationApiResponse = $this->jwtTokenHandlerService->validate_token($token);
 
-    if(!empty($validationApiResponse["error"])) {
+    if (!empty($validationApiResponse['error'])) {
       return new JsonResponse($validationApiResponse);
     }
 
-    $user = user_load_by_mail($validationApiResponse["email"]);
+    $user = user_load_by_mail($validationApiResponse['email']);
 
-    if(!$user) {
+    if (!$user) {
       $response = ['new_user' => true, 'email' => $validationApiResponse["email"]];
+
       return new JsonResponse($response);
     }
 
     $jwt = $this->jwtTokenHandlerService->generate_token($user->uid->value);
-    $response = ['validation' => ['social_auth_token' =>  $token, 'user' => $user, 'validation' => $validationApiResponse, 'jwt' => $jwt]];
+    $response = [
+      'validation' => [
+        'social_auth_token' => $token,
+        'user' => $user,
+        'validation' => $validationApiResponse,
+        'jwt' => $jwt,
+      ],
+    ];
 
     return new JsonResponse($response);
   }
 }
-?>

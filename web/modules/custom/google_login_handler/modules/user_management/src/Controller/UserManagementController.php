@@ -17,14 +17,14 @@ class UserManagementController extends ControllerBase {
 
   /**
    * Variable that will store the service
-   * 
+   *
    * @var \Drupal\google_login_handler\JwtTokenHandlerService
    */
   protected $jwtTokenHandlerService;
 
   /**
    * Request stack
-   * 
+   *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
@@ -56,14 +56,17 @@ class UserManagementController extends ControllerBase {
     );
   }
 
-  public function create_user() {
-    
+
+  /**
+   * Method to add users into Drupal.
+   */
+  public function add() {
     $imageUrl = $this->requestStack->getCurrentRequest()->get('profile');
 
-    if(!empty($imageUrl)) {
+    if (!empty($imageUrl)) {
       $profileImage = file_get_contents($imageUrl);
-      
-      $publicDirectory = 'public://Images/';
+      $publicDirectory = 'public://images/';
+
       file_prepare_directory($publicDirectory, FILE_CREATE_DIRECTORY);
 
       $image = file_save_data($profileImage, $publicDirectory . basename($imageUrl), FILE_EXISTS_REPLACE);
@@ -75,49 +78,97 @@ class UserManagementController extends ControllerBase {
       "password" => $this->requestStack->getCurrentRequest()->get('password'),
       "status" => 1,
       "roles" => [],
-      "user_picture" => !empty($imageUrl) ? ['target_id' => $image->id()] : ''
+      "user_picture" => !empty($imageUrl) ? ['target_id' => $image->id()] : '',
     ];
-    
+
     $user = $this->entityTypeManager()->getStorage('user')->create($userData);
     $user->save();
     $uid = $user->id();
-
     $token = $this->jwtTokenHandlerService->generate_token($uid);
+
     return new JsonResponse($token, 201);
   }
 
-  public function get_user() {
-
+  /**
+   * Method to update Drupal users.
+   */
+  public function update() {
+    // @TODO: This getCurrentRequest() is being called multiple times. It's worth
+    // having a specific method to load this. If you have to maintain / update this
+    // code in the future, you'll have to update it multiple times. If you have
+    // a simgle method to load it, you'll update it just once ;).
     $email = $this->requestStack->getCurrentRequest()->get('email');
-
-    if(empty($email)) {
-      $response = ['error' => 'no_email_sent', 'error_description' => 'No e-mail sent'];
-      return new JsonResponse($response, 500);
-    }
-
     $user = load_user_by_mail($email);
 
-    if(!$user) {
-      $response = ['error' => 'user_not_found', 'error_description' => 'User not found'];
+    if (empty($email)) {
+      $response = [
+        'error' => 'no_email_sent',
+        'error_description' => 'No e-mail sent',
+      ];
+
       return new JsonResponse($response, 500);
     }
-    
+
+    if (!$user) {
+      $response = [
+        'error' => 'user_not_found',
+        'error_description' => 'User not found',
+      ];
+
+      return new JsonResponse($response, 404);
+    }
+
     return new JsonResponse($user, 200);
   }
 
-  public function delete_user() {
-    
+  /**
+   * Method to load Drupal users.
+   */
+  public function load() {
     $email = $this->requestStack->getCurrentRequest()->get('email');
 
-    $user = load_user_by_mail($email);
+    if (empty($email)) {
+      $response = [
+        'error' => 'no_email_sent',
+        'error_description' => 'No e-mail sent',
+      ];
 
-    if(empty($email)) {
-      $response = ['error' => 'no_email_sent', 'error_description' => 'No e-mail sent'];
       return new JsonResponse($response, 500);
     }
 
-    if(!$user) {
-      $response = ['error' => 'user_not_found', 'error_description' => 'User not found'];
+    $user = load_user_by_mail($email);
+
+    if (!$user) {
+      $response = [
+        'error' => 'user_not_found',
+        'error_description' => 'User not found',
+      ];
+
+      return new JsonResponse($response, 500);
+    }
+
+    return new JsonResponse($user, 200);
+  }
+
+  public function delete() {
+    $email = $this->requestStack->getCurrentRequest()->get('email');
+    $user = load_user_by_mail($email);
+
+    if (empty($email)) {
+      $response = [
+        'error' => 'no_email_sent',
+        'error_description' => 'No e-mail sent',
+      ];
+
+      return new JsonResponse($response, 500);
+    }
+
+    if (!$user) {
+      $response = [
+        'error' => 'user_not_found',
+        'error_description' => 'User not found',
+      ];
+
       return new JsonResponse($response, 404);
     }
 
@@ -125,24 +176,4 @@ class UserManagementController extends ControllerBase {
 
     return new JsonResponse($user, 200);
   }
-
-  public function update_user() {
-
-    $email = $this->requestStack->getCurrentRequest()->get('email');
-
-    $user = load_user_by_mail($email);
-
-    if(empty($email)) {
-      $response = ['error' => 'no_email_sent', 'error_description' => 'No e-mail sent'];
-      return new JsonResponse($response, 500);
-    }
-
-    if(!$user) {
-      $response = ['error' => 'user_not_found', 'error_description' => 'User not found'];
-      return new JsonResponse($response, 404);
-    }
-
-    return new JsonResponse($user, 200);
-  }
 }
-?>

@@ -33,28 +33,28 @@ class GoogleLoginhandlerForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Google API URL:'),
       '#default_value' => $config->get('google_login_handler.google_api_url'),
-      '#description' => $this->t('Use this URL: https://www.googleapis.com/oauth2/v1/tokeninfo. You can change this later if they change the endpoint.')
+      '#description' => $this->t('Use this URL: https://www.googleapis.com/oauth2/v1/tokeninfo. You can change this later if they change the endpoint.'),
     ];
 
     $form['token_issuer'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Token issuer property:'),
       '#default_value' => $config->get('google_login_handler.token_issuer'),
-      '#description' => $this->t('Find more about this here: https://jwt.io/introduction/')
+      '#description' => $this->t('Find more about this here: https://jwt.io/introduction/'),
     ];
 
     $form['token_audience'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Token audience property:'),
       '#default_value' => $config->get('google_login_handler.token_audience'),
-      '#description' => $this->t('Find more about this here: https://jwt.io/introduction/')
+      '#description' => $this->t('Find more about this here: https://jwt.io/introduction/'),
     ];
 
     $form['signature_key'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Token signature key:'),
       '#default_value' => $config->get('google_login_handler.signature_key'),
-      '#description' => $this->t('Find more about this here: https://jwt.io/introduction/')
+      '#description' => $this->t('Find more about this here: https://jwt.io/introduction/'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -78,7 +78,7 @@ class GoogleLoginhandlerForm extends ConfigFormBase {
       ->set('google_login_handler.signature_key', $form_state->getValue('signature_key'))
       ->save();
 
-      return parent::submitForm($form, $form_state);
+    return parent::submitForm($form, $form_state);
   }
 
   /**
@@ -86,10 +86,6 @@ class GoogleLoginhandlerForm extends ConfigFormBase {
    */
   public function getEditableConfigNames() {
     // Returns the names of the settings files used by this module
-    return [
-      static::SETTINGS
-    ];
+    return [static::SETTINGS];
   }
-  
 }
-?>
