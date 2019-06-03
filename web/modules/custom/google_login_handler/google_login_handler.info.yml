@@ -1,6 +1,6 @@
 name: Google Login Handler
 type: module
-description: Module to validate tokens sent from Google social auth and generate an user token as response.
-package: Custom
+description: A module to validate tokens sent from Google Social Auth and generate a user token as a response.
+package: User Management
 core: 8.x
 configure: google_login_handler.form

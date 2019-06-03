@@ -1,34 +1,34 @@
-user_management.create_user:
-  path: '/api/user_management/create_user'
+user_management.add:
+  path: '/api/user_management/add'
   defaults:
-    _controller: '\Drupal\user_management\Controller\UserManagementController::create_user'
+    _controller: '\Drupal\user_management\Controller\UserManagementController::add'
     _title: 'User Management'
   requirements:
+    # @TODO: You should create a specific permission here.
     _permission: 'access content'
     _access: 'TRUE'
-
-user_management.update_user:
-  path: '/api/user_management/update_user'
+user_management.update:
+  path: '/api/user_management/update'
   defaults:
-    _controller: '\Drupal\user_management\Controller\UserManagementController::update_user'
+    _controller: '\Drupal\user_management\Controller\UserManagementController::update'
     _title: 'User Management'
   requirements:
+    # @TODO: You should create a specific permission here.
     _permission: 'access content'
     _access: 'TRUE'
-
-user_management.get_user:
-  path: '/api/user_management/get_user'
+user_management.load:
+  path: '/api/user_management/load'
   defaults:
-    _controller: '\Drupal\user_management\Controller\UserManagementController::get_user'
+    _controller: '\Drupal\user_management\Controller\UserManagementController::load'
     _title: 'User Management'
   requirements:
+    # @TODO: You should create a specific permission here.
     _permission: 'access content'
     _access: 'TRUE'
-
-user_management.delete_user:
-  path: '/api/user_management/delete_user'
+user_management.delete:
+  path: '/api/user_management/delete'
   defaults:
-    _controller: '\Drupal\user_management\Controller\UserManagementController::delete_user'
+    _controller: '\Drupal\user_management\Controller\UserManagementController::delete'
     _title: 'User Management'
   requirements:
     _permission: 'access content'
