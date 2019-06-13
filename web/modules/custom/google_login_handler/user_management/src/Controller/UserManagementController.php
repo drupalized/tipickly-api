@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * UserManagementController class to handle the CRUD process of users
@@ -37,12 +38,19 @@ class UserManagementController extends ControllerBase {
   protected $entityTypeManager;
 
   /**
+   * Serializer interface
+   * 
+   * @var \Symfony\Component\Serializer\SerializerInterface
+   */
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(JwtTokenHandlerService $jwtTokenHandlerService, RequestStack $requestStack, EntityTypeManager $entityTypeManager) {
+  public function __construct(JwtTokenHandlerService $jwtTokenHandlerService, RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager, SerializerInterface $serializer) {
     $this->jwtTokenHandlerService = $jwtTokenHandlerService;
     $this->requestStack = $requestStack;
     $this->entityTypeManager = $entityTypeManager;
+    $this->serializer = $serializer;
   }
 
   /**
@@ -52,7 +60,8 @@ class UserManagementController extends ControllerBase {
     return new static(
       $container->get('google_login_handler.jwt_token_handler'),
       $container->get('request_stack'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('serializer')
     );
   }
 
@@ -61,7 +70,7 @@ class UserManagementController extends ControllerBase {
    * Method to add users into Drupal.
    */
   public function add() {
-    $imageUrl = $this->requestStack->getCurrentRequest()->get('profile');
+    $imageUrl = $this->getFromRequestStack('profile');
 
     if (!empty($imageUrl)) {
       $profileImage = file_get_contents($imageUrl);
@@ -73,9 +82,9 @@ class UserManagementController extends ControllerBase {
     }
 
     $userData = [
-      "name" => $this->requestStack->getCurrentRequest()->get('name'),
-      "email" => $this->requestStack->getCurrentRequest()->get('email'),
-      "password" => $this->requestStack->getCurrentRequest()->get('password'),
+      "name" => $this->getFromRequestStack('name'),
+      "email" => $this->getFromRequestStack('email'),
+      "password" => $this->getFromRequestStack('password'),
       "status" => 1,
       "roles" => [],
       "user_picture" => !empty($imageUrl) ? ['target_id' => $image->id()] : '',
@@ -84,7 +93,7 @@ class UserManagementController extends ControllerBase {
     $user = $this->entityTypeManager()->getStorage('user')->create($userData);
     $user->save();
     $uid = $user->id();
-    $token = $this->jwtTokenHandlerService->generate_token($uid);
+    $token = $this->jwtTokenHandlerService->generate($uid);
 
     return new JsonResponse($token, 201);
   }
@@ -93,12 +102,8 @@ class UserManagementController extends ControllerBase {
    * Method to update Drupal users.
    */
   public function update() {
-    // @TODO: This getCurrentRequest() is being called multiple times. It's worth
-    // having a specific method to load this. If you have to maintain / update this
-    // code in the future, you'll have to update it multiple times. If you have
-    // a simgle method to load it, you'll update it just once ;).
-    $email = $this->requestStack->getCurrentRequest()->get('email');
-    $user = load_user_by_mail($email);
+    $email = $this->getFromRequestStack('email');
+    $user = user_load_by_mail($email);
 
     if (empty($email)) {
       $response = [
@@ -118,14 +123,14 @@ class UserManagementController extends ControllerBase {
       return new JsonResponse($response, 404);
     }
 
-    return new JsonResponse($user, 200);
+    return new JsonResponse($this->serializer->serialize($user, 'array'), 200);
   }
 
   /**
    * Method to load Drupal users.
    */
   public function load() {
-    $email = $this->requestStack->getCurrentRequest()->get('email');
+    $email = $this->getFromRequestStack('email');
 
     if (empty($email)) {
       $response = [
@@ -136,7 +141,7 @@ class UserManagementController extends ControllerBase {
       return new JsonResponse($response, 500);
     }
 
-    $user = load_user_by_mail($email);
+    $user = user_load_by_mail($email);
 
     if (!$user) {
       $response = [
@@ -147,12 +152,12 @@ class UserManagementController extends ControllerBase {
       return new JsonResponse($response, 500);
     }
 
-    return new JsonResponse($user, 200);
+    return new JsonResponse($this->serializer->serialize($user, 'json'), 200);
   }
 
   public function delete() {
-    $email = $this->requestStack->getCurrentRequest()->get('email');
-    $user = load_user_by_mail($email);
+    $email = $this->getFromRequestStack('email');
+    $user = user_load_by_mail($email);
 
     if (empty($email)) {
       $response = [
@@ -175,5 +180,9 @@ class UserManagementController extends ControllerBase {
     $user = $user->block();
 
     return new JsonResponse($user, 200);
+  }
+
+  protected function getFromRequestStack(string $param) {
+    return $this->requestStack->getCurrentRequest()->get($param);
   }
 }

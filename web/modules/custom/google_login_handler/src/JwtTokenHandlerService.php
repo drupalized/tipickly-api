@@ -6,6 +6,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use GuzzleHttp\Client;
+
 /**
  * Class that handles JWT tokens
  */
@@ -33,7 +34,7 @@ class JwtTokenHandlerService implements ContainerFactoryPluginInterface {
   protected $httpClient;
 
   /**
-   * Constructor
+   * {@inheritdoc}
    */
   public function __construct(ConfigFactoryInterface $configFactory, Client $httpClient) {
     $this->jwtToken = null;
@@ -51,11 +52,12 @@ class JwtTokenHandlerService implements ContainerFactoryPluginInterface {
     );
   }
 
+
   /**
    * Return a JWT token
    */
-  public function validate_token(string $token) {      
-    
+  public function validate(string $token) {      
+
     $config = $this->configFactory->get('google_login_handler.settings');
 
     try {
@@ -90,7 +92,7 @@ class JwtTokenHandlerService implements ContainerFactoryPluginInterface {
   /**
    * Return JWT token
    */
-  public function generate_token(string $user_uid) {
+  public function generate(string $user_uid) {
 
     $config = $this->configFactory->get('google_login_handler.settings');
     
@@ -127,6 +129,4 @@ class JwtTokenHandlerService implements ContainerFactoryPluginInterface {
   protected function base64_url_encode($data) {
     return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data));
   }
-
 }
-?>

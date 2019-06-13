@@ -4,8 +4,7 @@ user_management.add:
     _controller: '\Drupal\user_management\Controller\UserManagementController::add'
     _title: 'User Management'
   requirements:
-    # @TODO: You should create a specific permission here.
-    _permission: 'access content'
+    _permission: 'add users using user_management api'
     _access: 'TRUE'
 user_management.update:
   path: '/api/user_management/update'
@@ -13,8 +12,7 @@ user_management.update:
     _controller: '\Drupal\user_management\Controller\UserManagementController::update'
     _title: 'User Management'
   requirements:
-    # @TODO: You should create a specific permission here.
-    _permission: 'access content'
+    _permission: 'update users using user_management api'
     _access: 'TRUE'
 user_management.load:
   path: '/api/user_management/load'
@@ -22,8 +20,7 @@ user_management.load:
     _controller: '\Drupal\user_management\Controller\UserManagementController::load'
     _title: 'User Management'
   requirements:
-    # @TODO: You should create a specific permission here.
-    _permission: 'access content'
+    _permission: 'load users using user_management api'
     _access: 'TRUE'
 user_management.delete:
   path: '/api/user_management/delete'
@@ -31,5 +28,5 @@ user_management.delete:
     _controller: '\Drupal\user_management\Controller\UserManagementController::delete'
     _title: 'User Management'
   requirements:
-    _permission: 'access content'
+    _permission: 'delete users using user_management api'
     _access: 'TRUE'

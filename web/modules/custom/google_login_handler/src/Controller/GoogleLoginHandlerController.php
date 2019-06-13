@@ -47,6 +47,7 @@ class GoogleLoginHandlerController extends ControllerBase {
     );
   }
 
+  
   /**
    * Calls the API and returns a user token or message error
    */
@@ -58,7 +59,7 @@ class GoogleLoginHandlerController extends ControllerBase {
       return new JsonResponse($response);
     }
 
-    $validationApiResponse = $this->jwtTokenHandlerService->validate_token($token);
+    $validationApiResponse = $this->jwtTokenHandlerService->validate($token);
 
     if (!empty($validationApiResponse['error'])) {
       return new JsonResponse($validationApiResponse);
@@ -72,7 +73,7 @@ class GoogleLoginHandlerController extends ControllerBase {
       return new JsonResponse($response);
     }
 
-    $jwt = $this->jwtTokenHandlerService->generate_token($user->uid->value);
+    $jwt = $this->jwtTokenHandlerService->generate($user->uid->value);
     $response = [
       'validation' => [
         'social_auth_token' => $token,

@@ -1,0 +1,19 @@
+'add users using user_management api':
+  title: 'Add users'
+  description: 'Permission to add users using User Management API'
+  restrict access: TRUE
+
+'update users using user_management api':
+  title: 'Update users'
+  description: 'Permission to update users using User Management API'
+  restrict access: TRUE
+
+'load users using user_management api':
+  title: 'Load users'
+  description: 'Permission to load users using User Management API'
+  restrict access: TRUE
+
+'delete users using user_management api':
+  title: 'Delete users'
+  description: 'Permission to delete users using User Management API'
+  restrict access: TRUE
